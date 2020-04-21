@@ -24,24 +24,21 @@ export default function App() {
     // Implement "Like Repository" functionality
     
     try{
-      console.log('id...'+id)
+      
       const response = await api.post(`/repositories/${id}/like`);
-      const repoLiked = response.data;
+      const { likes } = response.data;
+      
 
-      const repoUpdate  = projects.map(repository => {
-        console.log("repository.id..."+repository.id)
-  
-        if(repository.id === id){
-          console.log(`dentro do if`)
-            return repoLiked
-            console.log("repoLiked "+repoLiked)
-        }else{
-          console.log(`dentro do else`)
-         return repository
-         console.log("repository "+repository)
-        }
+      // const newProject = projects.filter(p => p.id === id);
+      // const oldProject = projects.filter(p => p.id !== id);
+      const newProject = projects.map(davi => {
+        
+        if(davi.id === id) davi.likes = likes
+        return davi;
       })
-      setProjects(repoUpdate)
+      // newProject[0].likes = repoLiked.likes
+      // console.log('newObject', [...projects, newProject])
+      setProjects(newProject)
      }catch (error) {
       console.log(error);
     }
@@ -52,42 +49,40 @@ export default function App() {
 
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <SafeAreaView style={styles.container}>
-      <FlatList
-          
+      <FlatList  
           data={projects}
           keyExtractor={(project) => project.id}
           renderItem={({item: project}) => (
-            <View style={styles.repositoryContainer}>
-              <Text style={styles.repository} key={project.id}> 
-              {project.title}     
-            </Text>
+            <View style={styles.repositoryContainer} key={project.id}>
+              <Text style={styles.repository}> 
+                {project.title}
+              </Text>
 
-            {/* <View style={styles.techsContainer}>
-                {project.techs.map(tech =>
-                    <Text style={styles.tech}>
-                      {tech}
-                    </Text>
+              <View style={styles.techsContainer}>
+                {project.techs.map((tech, i) =>
+                  <Text style={styles.tech} key={i}>
+                    {tech}
+                  </Text>
                 )}
-              </View> */}
+              </View>
 
               <View style={styles.likesContainer}>
                 <Text testID={`repository-likes-${project.id}`}
                   style={styles.likeText}  
                 >
-                  Curtidas {project.likes} 
+                 {project.likes} curtida{(project.likes > 1) ? 's' : ''}
                 </Text>
             
-          </View>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleLikeRepository(project.id)}
-            // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
-            testID={`like-button-${project.id}`}
-          >
-            <Text style={styles.buttonText}>Curtir</Text>
-          </TouchableOpacity>
-          </View>
+              </View>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleLikeRepository(project.id)}
+                // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
+                testID={`like-button-${project.id}`}
+              >
+                <Text style={styles.buttonText}>Curtir</Text>
+              </TouchableOpacity>
+            </View>
           )}   
       />
       </SafeAreaView>
